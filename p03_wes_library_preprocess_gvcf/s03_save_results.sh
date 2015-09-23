@@ -2,12 +2,7 @@
 
 # s03_results.sh
 # Save results to NAS
-# Alexey Larionov, 21Sep2015
-
-# Notes:
-# Tested with gnuplot 5.0 (may not work with old gnuplot versions)
-# Requires ssh connection to be established with -X option
-# Requires LiberationSans-Regular.ttf font (included in tools/config)
+# Alexey Larionov, 23Sep2015
 
 # Read parameters
 job_file="${1}"
@@ -17,10 +12,7 @@ pipeline_log="${3}"
 # Update pipeline log
 echo "Started making summaries and plots for merged wes samples: $(date +%d%b%Y_%H:%M:%S)" >> "${pipeline_log}"
 
-# ------------------------------------------------- #
-#         Set environment and start job log         #
-# ------------------------------------------------- #
-
+# Set environment and start job log
 echo "Saving procecced bams and qvcfs to NAS"
 echo "Started: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
@@ -32,11 +24,9 @@ echo ""
 # Get list of samples
 samples=$(awk 'NR>1 {print $1}' "${merged_folder}/samples.txt")
 
-# ------- Save results to NAS ------- #
-
 # Copy processed bams and gvcfs
-"${rsync}" -thrve ssh "${proc_bam_folder}" "${data_server}:${project_location}/${project}/${library}/"
-"${rsync}" -thrve ssh "${gvcf_folder}" "${data_server}:${project_location}/${project}/${library}/"
+rsync -thrve "ssh -x" "${processed_folder}" "${data_server}:${project_location}/${project}/${library}/"
+rsync -thrve "ssh -x" "${gvcf_folder}" "${data_server}:${project_location}/${project}/${library}/"
 
 # Progress messages
 echo ""
@@ -44,8 +34,6 @@ echo "Completed saving results to NAS: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
 echo "Saved results to NAS: $(date +%d%b%Y_%H:%M:%S)" >> "${pipeline_log}"
 echo "" >> "${pipeline_log}"
-
-# ------- Additional tasks ------- # 
 
 # Change ownership (to allow user manipulating files later w/o administrative privileges)
 ssh "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}/${project}/${library}/gvcfs"
@@ -74,9 +62,9 @@ if [ "${remove_project_folder}" == "yes" ] || [ "${remove_project_folder}" == "Y
 then 
   rm -fr "${project_folder}"
 else
-  rm -fr "${proc_bam_folder}"
+  rm -fr "${processed_folder}"
   rm -fr "${gvcf_folder}"
-  rm -fr "${dedup_bam_folder}"
+  rm -fr "${merged_folder}"
 fi 
 
 # Update logs on NAS

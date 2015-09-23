@@ -406,7 +406,7 @@ then
 
   # Submit job to save results to NAS
   sbatch "${slurm_time}" "${slurm_account}" \
-       "${scripts_folder}/s03_results.sb.sh" \
+       "${scripts_folder}/s03_save_results.sb.sh" \
        "${job_file}" \
        "${logs_folder}" \
        "${scripts_folder}" \

@@ -16,6 +16,7 @@ echo "Started s01_copy_and_dispatch: $(date +%d%b%Y_%H:%M:%S)" >> "${pipeline_lo
 # Set parameters
 source "${scripts_folder}/a02_read_config.sh"
 echo "Read settings"
+echo "Started: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
 
 # ================= Copy source dedupped bams to cluster ================= #
