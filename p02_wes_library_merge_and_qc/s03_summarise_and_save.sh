@@ -489,7 +489,6 @@ export JAVA_OPTS="-Xms1G -Xmx60G"
 qualimap_log="${qualimap_summary_folder}/summary.log"
 "${qualimap}" multi-bamqc \
   --data "${samples_list}" \
-  --paint-chromosome-limits \
   -outdir "${qualimap_summary_folder}" &> "${qualimap_log}"
 
 # Progress report
@@ -519,7 +518,7 @@ done
 echo "Started saving results to NAS"
 
 # Copy files
-"${rsync}" -thrve ssh "${merged_folder}" "${data_server}:${project_location}/${project}/${library}/"
+"${rsync}" -thrve "ssh -x" "${merged_folder}" "${data_server}:${project_location}/${project}/${library}/"
 
 # Progress messages
 echo ""

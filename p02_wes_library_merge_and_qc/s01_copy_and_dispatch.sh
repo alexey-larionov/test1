@@ -42,7 +42,7 @@ echo ""
 # Copy samples lists for all lanes
 for lane in ${lanes}
 do
-  "${rsync}" -thrve ssh "${data_server}:${project_location}/${project}/${library}/${lane}/samples.txt" "${merged_folder}/${lane}_samples.txt" 
+  "${rsync}" -thrve "ssh -x" "${data_server}:${project_location}/${project}/${library}/${lane}/samples.txt" "${merged_folder}/${lane}_samples.txt" 
   echo ""
 done
 
@@ -110,7 +110,7 @@ do
   
     # Copy data
     bam_file=$(awk -v sm="${sample}" '$1==sm {print $2}' "${merged_folder}/${lane}_samples.txt")
-    "${rsync}" -thrve ssh "${data_server}:${project_location}/${project}/${library}/${lane}/${bam_file}" "${bam_folder}/"
+    "${rsync}" -thrve "ssh -x" "${data_server}:${project_location}/${project}/${library}/${lane}/${bam_file}" "${bam_folder}/"
     echo ""
     
   done

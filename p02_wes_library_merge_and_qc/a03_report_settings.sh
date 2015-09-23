@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# s02_read_config.sh
-# Parse congig file for wes library merge pipeline
+# s03_report_settings.sh
+# Report settings for wes library merge pipeline
 # Alexey Larionov, 23Aug2015
 
 pipeline_info=$(grep "^#" "${job_file}")

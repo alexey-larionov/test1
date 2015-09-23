@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# s02_read_config.sh
-# Parse congig file for wes lane alignment pipeline
+# s03_report_settings.sh
+# Report settings for wes lane alignment pipeline
 # Alexey Larionov, 16Aug2015
 
 pipeline_info=$(grep "^#" "${job_file}")
