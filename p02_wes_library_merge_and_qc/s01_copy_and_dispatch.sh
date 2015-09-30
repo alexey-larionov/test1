@@ -29,6 +29,9 @@ mkdir -p "${picard_alignment_folder}"
 mkdir -p "${picard_hybridisation_folder}"
 mkdir -p "${qualimap_results_folder}"
 mkdir -p "${samstat_results_folder}"
+mkdir -p "${gatk_diagnose_targets_folder}"
+mkdir -p "${gatk_depth_of_coverage_folder}"
+echo "Not yet implemented.  Hopefully I will do it later. AL30Sep2015" > "${gatk_depth_of_coverage_folder}/not_yet_implemented.txt"
 
 # Progress update 
 echo "Made working folders on cluster"

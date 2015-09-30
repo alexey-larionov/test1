@@ -1,0 +1,37 @@
+INFO  18:11:46,821 HelpFormatter - --------------------------------------------------------------------------------- 
+INFO  18:11:46,823 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.4-46-gbc02625, Compiled 2015/07/09 17:38:12 
+INFO  18:11:46,823 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  18:11:46,823 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  18:11:46,826 HelpFormatter - Program Args: -T QualifyMissingIntervals -R /scratch/medgen/resources/gatk_bundle/b37/decompressed/human_g1k_v37.fasta -L /scratch/medgen/scripts/development/P1_A01_missing_targets.intervals -I /scratch/medgen/scripts/development/P1_A01_dedup.bam -o /scratch/medgen/scripts/development/P1_A01_missing_targets.grp -targets /scratch/medgen/resources/illumina_nextera/nexterarapidcapture_exome_targetedregions_v1.2.b37.intervals -nct 12 
+INFO  18:11:46,831 HelpFormatter - Executing as al720@sand-1-20 on Linux 2.6.32-504.23.4.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.7.0_76-b13. 
+INFO  18:11:46,832 HelpFormatter - Date/Time: 2015/09/30 18:11:46 
+INFO  18:11:46,832 HelpFormatter - --------------------------------------------------------------------------------- 
+INFO  18:11:46,832 HelpFormatter - --------------------------------------------------------------------------------- 
+INFO  18:11:47,485 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  18:11:47,563 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 1000 
+INFO  18:11:47,570 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  18:11:47,605 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.03 
+INFO  18:11:47,782 IntervalUtils - Processing 4401763 bp from intervals 
+INFO  18:11:47,799 MicroScheduler - Running the GATK in parallel mode with 12 total threads, 12 CPU thread(s) for each of 1 data thread(s), of 16 processors available on this machine 
+INFO  18:11:47,860 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  18:11:48,043 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  18:11:48,043 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  18:11:48,044 ProgressMeter -                 | processed |    time |    per 1M |           |   total | remaining 
+INFO  18:11:48,044 ProgressMeter -        Location |     sites | elapsed |     sites | completed | runtime |   runtime 
+INFO  18:12:18,047 ProgressMeter -      2:88991509   2159037.0    30.0 s      13.0 s       11.5%     4.3 m       3.8 m 
+INFO  18:12:48,049 ProgressMeter -     4:106395150   3272258.0    60.0 s      18.0 s       20.2%     5.0 m       4.0 m 
+INFO  18:13:18,052 ProgressMeter -      7:56183909   4439009.0    90.0 s      20.0 s       28.6%     5.2 m       3.7 m 
+INFO  18:13:48,053 ProgressMeter -     10:38403772   6966427.0   120.0 s      17.0 s       42.3%     4.7 m       2.7 m 
+INFO  18:14:18,054 ProgressMeter -    13:102569040   8769143.0     2.5 m      17.0 s       54.2%     4.6 m       2.1 m 
+INFO  18:14:48,054 ProgressMeter -     17:43568068   1.232985E7     3.0 m      14.0 s       71.5%     4.2 m      71.0 s 
+INFO  18:15:18,055 ProgressMeter -      X:52546025   1.6519812E7     3.5 m      12.0 s       94.1%     3.7 m      13.0 s 
+INFO  18:15:47,331 ProgressMeter -            done   1.9692826E7     4.0 m      12.0 s      100.0%     4.0 m       0.0 s 
+INFO  18:15:47,332 ProgressMeter - Total runtime 239.29 secs, 3.99 min, 0.07 hours 
+INFO  18:15:47,335 MicroScheduler - 2938 reads were filtered out during the traversal out of approximately 1139764 total reads (0.26%) 
+INFO  18:15:47,335 MicroScheduler -   -> 0 reads (0.00% of total) failing BadCigarFilter 
+INFO  18:15:47,335 MicroScheduler -   -> 0 reads (0.00% of total) failing DuplicateReadFilter 
+INFO  18:15:47,335 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  18:15:47,336 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  18:15:47,336 MicroScheduler -   -> 254 reads (0.02% of total) failing NotPrimaryAlignmentFilter 
+INFO  18:15:47,336 MicroScheduler -   -> 2684 reads (0.24% of total) failing UnmappedReadFilter 
+INFO  18:15:48,300 GATKRunReport - Uploaded run statistics report to AWS S3 

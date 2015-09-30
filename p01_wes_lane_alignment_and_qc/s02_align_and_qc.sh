@@ -207,6 +207,7 @@ rg_bam="${bam_folder}/${rg_bam_file}"
 
 # Note: 
 # md5 created for it's the final bam (mkdupped will be removed)...
+# The MD5 file is of special format: it contains md5 sum only, without the file name
 
 # Remove bam without RG
 rm -f "${sort_bam}"
@@ -400,7 +401,7 @@ echo ""
 # from different lanes.  It is possible, however, to consider
 # re-makdupping of merged mkdupped files. 
 
-# -- Add sample to the lane's sample list (for merjing step) -- #
+# -- Add sample to the lane's sample list (for merging step) -- #
 
 bam_samples_file="${lane_folder}/samples.txt"
 

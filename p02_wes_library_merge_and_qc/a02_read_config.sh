@@ -74,6 +74,9 @@ PATH="${samtools_folder}:${PATH}" # samstat needs samtools in the PATH
 picard=$(get_parameter "picard") # e.g. picard/picard-tools-1.133/picard.jar
 picard="${tools_folder}/${picard}"
 
+gatk=$(get_parameter "gatk") # e.g. gatk/gatk-3.4-46/GenomeAnalysisTK.jar
+gatk="${tools_folder}/${gatk}"
+
 r_folder=$(get_parameter "r_folder") # e.g. r/R-3.2.0/bin
 r_folder="${tools_folder}/${r_folder}"
 PATH="${r_folder}:${PATH}" # picard, GATK and Qualimap need R in the PATH
@@ -99,6 +102,9 @@ resources_folder=$(get_parameter "resources_folder") # e.g. /scratch/medgen/reso
 
 ref_genome=$(get_parameter "ref_genome") # e.g. gatk_bundle/b37/decompressed/human_g1k_v37.fasta
 ref_genome="${resources_folder}/${ref_genome}"
+
+broad_exome=$(get_parameter "broad_exome") # e.g. gatk_bundle/b37/decompressed/Broad.human.exome.b37.interval_list
+broad_exome="${resources_folder}/${broad_exome}"
 
 hs_metrics_probes_name=$(get_parameter "hs_metrics_probes_name") # e.g. Nexera_Rapid_Capture_Exome
 
@@ -151,3 +157,9 @@ qualimap_results_folder="${merged_folder}/${qualimap_results_folder}"
 
 samstat_results_folder=$(get_parameter "samstat_results_folder") # e.g. f02_metrics/f04_samstat
 samstat_results_folder="${merged_folder}/${samstat_results_folder}"
+
+gatk_diagnose_targets_folder=$(get_parameter "gatk_diagnose_targets_folder") # e.g. f02_metrics/f05_gatk/f01_diagnose_targets
+gatk_diagnose_targets_folder="${merged_folder}/${gatk_diagnose_targets_folder}"
+
+gatk_depth_of_coverage_folder=$(get_parameter "gatk_depth_of_coverage_folder") # e.g. f02_metrics/f05_gatk/f02_depth_of_coverage
+gatk_depth_of_coverage_folder="${merged_folder}/${gatk_depth_of_coverage_folder}"
