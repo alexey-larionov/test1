@@ -13,7 +13,7 @@ function get_parameter()
 	echo ${line} # return value
 }
 
-# ======= Analysis settings ======= #
+# ======= Basic settings ======= #
 
 project=$(get_parameter "project") # e.g. project1
 libraries=$(get_parameter "libraries") # e.g. library1
@@ -22,7 +22,12 @@ set_id=$(get_parameter "set_id") # e.g. set1
 data_server=$(get_parameter "Data server") # e.g. admin@mgqnap.medschl.cam.ac.uk
 project_location=$(get_parameter "Project location") # e.g. /share/alexey
 
-remove_project_folder=$(get_parameter "Remove project folder from HPC scratch after run") # e.g. yes
+# ======= Data keeping/moving after run ======= #
+
+remove_project_folder_from_hpc=$(get_parameter "Remove project folder from HPC scratch") # e.g. yes
+remove_source_files_from_hpc=$(get_parameter "Remove source files from HPC scratch") # e.g. yes
+remove_results_from_hpc=$(get_parameter "Remove results from HPC scratch") # e.g. yes
+copy_results_to_nas=$(get_parameter "Copy results to data server") # e.g. yes
 
 # ========== HPC settings ========== #
 
