@@ -2,7 +2,7 @@
 
 # s01_genotype_gvcfs.sh
 # Genotype gvcfs
-# Alexey Larionov, 25Sep2015
+# Alexey Larionov, 13Oct2015
 
 # Read parameters
 job_file="${1}"
@@ -36,11 +36,11 @@ for set in ${sets}
 do
 
   # Copy data
-  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/combined_gvcfs/${set}.g.vcf" "${raw_vcf_folder}/"
-  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/combined_gvcfs/${set}.g.vcf.idx" "${raw_vcf_folder}/"
+  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/combined_gvcfs/${set}.g.vcf" "${raw_vcf_folder}/${result_id}_source_files/"
+  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/combined_gvcfs/${set}.g.vcf.idx" "${raw_vcf_folder}/${result_id}_source_files/"
 
   # Add gvcf file name to the list of source gvcfs
-  echo "${set}.g.vcf" >> "${source_gvcfs}"
+  echo "${raw_vcf_folder}/${result_id}_source_files/${set}.g.vcf" >> "${source_gvcfs}"
 
   # Progress report
   echo "${set}"
@@ -60,7 +60,7 @@ echo ""
 
 # File names
 raw_vcf="${result_id}_raw.vcf"
-raw_vcf_log="${result_id}_raw_vcf.log"
+GenotypeGVCFs_log="${result_id}_GenotypeGVCFs.log"
 raw_vcf_md5="${result_id}_raw_vcf.md5"
 
 # Calculate variant calls
@@ -68,27 +68,16 @@ raw_vcf_md5="${result_id}_raw_vcf.md5"
   -T GenotypeGVCFs \
   -R "${ref_genome}" \
   -L "${nextera_targets_intervals}" -ip 100 \
+  -maxAltAlleles 25 \
   -V "${source_gvcfs}" \
   -o "${raw_vcf}" \
-  -nt 14 &>>  "${raw_vcf_log}"
-
-# Note about other possible options:
-# Default max num of alternate alleles is 6, it can be changed, e.g.
-# -maxAltAlleles 20
-# However, it may be computationally demanding
+  -nt 14 &>  "${GenotypeGVCFs_log}"
 
 # Make md5 file
 md5sum "${raw_vcf}" "${raw_vcf}.idx" > "${raw_vcf_md5}"
 
-# Remove the source files 
-gvcfs=$(< "${source_gvcfs}")
-for gvcf in ${gvcfs}
-do
-  rm -f "${gvcf}" "${gvcf}.idx"
-done
-
-# Return to the initial folder
-cd "${init_dir}"
+# Remove source files from cluster
+rm -fr "${result_id}_source_files"
 
 # Progress report
 echo ""
@@ -124,20 +113,39 @@ echo ""
 # Copy files to NAS
 rsync -thrqe "ssh -x" "${raw_vcf_folder}" "${data_server}:${project_location}/${project}/" 
 
+# Change ownership on nas (to allow user manipulating files later w/o administrative privileges)
+ssh -x "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}/${project}/raw_vcf"
+ssh -x "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}/${project}" # just in case...
+ssh -x "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}" # just in case...
+
 # Progress report
 echo ""
 echo "Completed copying results to NAS: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
 
-# Remove results from cluster 
+# Remove results from cluster
+rm -fr "${vcf_plots_folder}"
+
+rm -f "${source_gvcfs)"
+rm -f "${raw_vcf}"
+rm -f "${raw_vcf}.idx"
+rm -f "${GenotypeGVCFs_log}"
+rm -f "${raw_vcf_md5}"
+rm -f "${vcf_stats}"
+rm -f "${result_id}_raw_vcf.log"
+rm -f "${result_id}_raw_vcf.res"
+
+ssh -x "${data_server}" "echo \"Removed results from cluster\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"
+
+# Return to the initial folder
+cd "${init_dir}"
+
+# Remove results from cluster
 if [ "${remove_project_folder}" == "yes" ] || [ "${remove_project_folder}" == "Yes" ] 
 then 
-  echo "Remove project folder from hpc scratch"
-  #rm -fr "${project_folder}"
+  rm -fr "${project_folder}"
+  ssh -x "${data_server}" "echo \"Removed working folder from cluster\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"
 else
-  echo "Remove raw vcf folder from hpc scratch"
-  #rm -fr "${raw_vcf_folder}"
+  ssh -x "${data_server}" "echo \"Working folder is not removed from cluster\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"
 fi 
 
-# Update log on NAS
-ssh "${data_server}" "echo \"Removed data from cluster\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"

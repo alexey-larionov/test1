@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # s02_read_config.sh
-# Parse congig file for combining gvcfs
-# Alexey Larionov, 13Oct2015
+# Parse config file for filtering raw vcf by qual
+# Alexey Larionov, 14Oct2015
 
 # Function for reading parameters
 function get_parameter()
@@ -15,18 +15,18 @@ function get_parameter()
 
 # ======= Analysis settings ======= #
 
-project=$(get_parameter "project") # e.g. project1
-libraries=$(get_parameter "libraries") # e.g. library1
-set_id=$(get_parameter "set_id") # e.g. set1
+project=$(get_parameter "project") # e.g. CCLG
+raw_vcf=$(get_parameter "raw vcf") # e.g. CCLG_v1_Oct_results_raw.vcf
+qual_threshold=$(get_parameter "qual threshold") # e.g. 100
 
 data_server=$(get_parameter "Data server") # e.g. admin@mgqnap.medschl.cam.ac.uk
-project_location=$(get_parameter "Project location") # e.g. /share/alexey
+project_location=$(get_parameter "Project location") # e.g. /share/mae
 
-remove_project_folder_from_hpc=$(get_parameter "Remove project folder from HPC scratch") # e.g. yes
+remove_project_folder=$(get_parameter "Remove project folder from HPC scratch after run") # e.g. yes
 
 # ========== HPC settings ========== #
 
-working_folder=$(get_parameter "working_folder") # e.g. /scratch/medgen/users/alexey
+working_folder=$(get_parameter "working_folder") # e.g. /scratch/medgen/users/mae
 
 account_to_use=$(get_parameter "Account to use on HPC") # e.g. TISCHKOWITZ-SL2
 time_to_request=$(get_parameter "Max time to request (hrs.min.sec)") # e.g. 02.00.00
@@ -34,12 +34,12 @@ time_to_request=${time_to_request//./:} # substitute dots to colons
 
 # ======== mgqnap settings ======== #
 
-mgqnap_user=$(get_parameter "mgqnap_user") # e.g. alexey
+mgqnap_user=$(get_parameter "mgqnap_user") # e.g. mae
 mgqnap_group=$(get_parameter "mgqnap_group") # e.g. mtgroup
 
 # ======= Standard settings ======= #
 
-scripts_folder=$(get_parameter "scripts_folder") # e.g. /scratch/medgen/scripts/p04_wecare_combine_gvcfs
+scripts_folder=$(get_parameter "scripts_folder") # e.g. /scratch/medgen/scripts/p06_wes_filter_by_qual
 
 # ----------- Tools ---------- #
 
@@ -50,6 +50,18 @@ java7="${tools_folder}/${java7}"
 
 gatk=$(get_parameter "gatk") # e.g. gatk/gatk-3.4-46/GenomeAnalysisTK.jar
 gatk="${tools_folder}/${gatk}"
+
+bcftools=$(get_parameter "bcftools") # e.g. bcftools/bcftools-1.2/bin/bcftools
+bcftools="${tools_folder}/${bcftools}"
+
+plot_vcfstats=$(get_parameter "plot_vcfstats") # e.g. bcftools/bcftools-1.2/bin/plot-vcfstats
+plot_vcfstats="${tools_folder}/${plot_vcfstats}"
+
+# Prepend path to local version of python within the toolbox:
+# it contains updated version of matplotlib library for plot-vcfstats script
+python_bin=$(get_parameter "python_bin") # e.g. python/python_2.7.10/bin/
+python_bin="${tools_folder}/${python_bin}"
+PATH="${python_bin}":$PATH
 
 # ----------- Resources ---------- #
 
@@ -69,7 +81,10 @@ nextera_targets_intervals="${nextera_folder}/${nextera_targets_intervals}"
 
 # ----------- Working sub-folders ---------- #
 
-project_folder="${working_folder}/${project}" # e.g. project1
+project_folder="${working_folder}/${project}" # e.g. CCLG
 
-combined_gvcfs_folder=$(get_parameter "combined_gvcfs_folder") # e.g. combined_gvcfs
-combined_gvcfs_folder="${project_folder}/${combined_gvcfs_folder}"
+filtered_vcf_folder=$(get_parameter "filtered_vcf_folder") # e.g. qual_filtered_vcf
+filtered_vcf_folder="${project_folder}/${filtered_vcf_folder}"
+
+vcf_plots_folder=$(get_parameter "vcf_plots_folder") # e.g. plots
+vcf_plots_folder="${filtered_vcf_folder}/${vcf_plots_folder}"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # s03_report_config.sh
-# Reporting settings for combining gvcfs
-# Alexey Larionov, 23Sep2015
+# Reporting settings for filtering raw vcf by qual
+# Alexey Larionov, 14Oct2015
 
 pipeline_info=$(grep "^#" "${job_file}")
 pipeline_info=${pipeline_info//"#"/}
@@ -14,13 +14,13 @@ echo ""
 echo "------------------ Analysis settings -----------------"
 echo ""
 echo "project: ${project}"
-echo "libraries: ${libraries}"
-echo "set_id: ${set_id}"
+echo "raw_vcf: ${raw_vcf}"
+echo "qual_threshold: ${qual_threshold}"
 echo ""
 echo "data_server: ${data_server}"
 echo "project_location: ${project_location}"
 echo ""
-echo "remove_project_folder_from_hpc: ${remove_project_folder_from_hpc}"
+echo "remove_project_folder: ${remove_project_folder}"
 echo ""
 echo "------------------- HPC settings ---------------------"
 echo ""
@@ -42,8 +42,14 @@ echo "Tools"
 echo "-----"
 echo ""
 echo "tools_folder: ${tools_folder}"
+echo ""
 echo "java7: ${java7}"
 echo "gatk: ${gatk}"
+echo ""
+echo "bcftools: ${bcftools}"
+echo "plot_vcfstats: ${plot_vcfstats}"
+echo ""
+echo "python_bin: ${python_bin}"
 echo ""
 echo "Resources" 
 echo "---------"
@@ -60,5 +66,7 @@ echo "Working sub-folders on HPC"
 echo "--------------------------"
 echo ""
 echo "project_folder: ${project_folder}"
-echo "combined_gvcfs_folder: ${combined_gvcfs_folder}"
+echo ""
+echo "filtered_vcf_folder: ${filtered_vcf_folder}"
+echo "vcf_plots_folder: ${vcf_plots_folder}"
 echo "" 

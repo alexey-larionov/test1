@@ -2,7 +2,7 @@
 
 # a00_start_pipeline.sh
 # Start genotyping gvcfs
-# Alexey Larionov, 24Sep2015
+# Alexey Larionov, 12Oct2015
 
 ## Read parameter
 job_file="${1}"
@@ -13,6 +13,7 @@ source "${scripts_folder}/a02_read_config.sh"
 
 # Start lane pipeline log
 mkdir -p "${raw_vcf_folder}"
+mkdir -p "${raw_vcf_folder}/${result_id}_source_files"
 log="${raw_vcf_folder}/${result_id}_raw_vcf.log"
 
 echo "WES library: genotype gvcfs" > "${log}"

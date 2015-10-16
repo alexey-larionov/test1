@@ -113,6 +113,9 @@ echo ""
 # Most likely they are not on the same site...  This shows that this step is not necessary and 
 # can be removed leter. However, it is not difficult to keep this step for now. 
 
+# MAX_FILE_HANDLES_FOR_READ_ENDS_MAP refers to the number of file handlers available for bash?
+# ulimit -n
+
 # Progress report
 echo "Check whether new PCR duplicates have been detected after realignment (remove, if any)"
 

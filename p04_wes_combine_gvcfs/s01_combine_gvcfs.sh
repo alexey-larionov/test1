@@ -2,7 +2,7 @@
 
 # s01_combine_gvcfs.sh
 # Combine gvcfs
-# Alexey Larionov, 07Oct2015
+# Alexey Larionov, 12Oct2015
 
 # Read parameters
 job_file="${1}"
@@ -39,27 +39,26 @@ do
   echo "${library}"
   echo "Getting list of samples"
 
-
   # Copy samples file
-  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/samples.txt" "${combined_gvcfs_folder}/" 
+  rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/samples.txt" "${combined_gvcfs_folder}/${set_id}_source_files/${library}_samples.txt" 
 
   # Progress report
   echo "Copying gvcfs to cluster"
 
   # Get list of samples
-  samples=$(awk 'NR>1 {print $1}' "${combined_gvcfs_folder}/samples.txt")
+  samples=$(awk 'NR>1 {print $1}' "${combined_gvcfs_folder}/${set_id}_source_files/${library}_samples.txt")
 
   # For each sample
   for sample in ${samples}
   do
 
-    # Copy gvcf file and gvcf index
-    gvcf_file=$(awk -v sm="${sample}" '$1==sm {print $2}' "${combined_gvcfs_folder}/samples.txt")
-    rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/${gvcf_file}" "${combined_gvcfs_folder}/"
-    rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/${gvcf_file}.idx" "${combined_gvcfs_folder}/"
+    # Copy gvcf file and index
+    gvcf_file=$(awk -v sm="${sample}" '$1==sm {print $2}' "${combined_gvcfs_folder}/${set_id}_source_files/${library}_samples.txt")
+    rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/${gvcf_file}" "${combined_gvcfs_folder}/${set_id}_source_files/"
+    rsync -thrqe "ssh -x" "${data_server}:${project_location}/${project}/${library}/gvcfs/${gvcf_file}.idx" "${combined_gvcfs_folder}/${set_id}_source_files/"
     
     # Add gvcf file name to the list of source gvcfs
-    echo "${gvcf_file}" >> "${source_gvcfs}"
+    echo "${combined_gvcfs_folder}/${set_id}_source_files/${gvcf_file}" >> "${source_gvcfs}"
     
     # Progress report
     echo "${sample}"
@@ -70,9 +69,6 @@ do
   
 done # next library
 
-# Remove samples file remaining from the last library
-rm -f "${combined_gvcfs_folder}/samples.txt" 
-
 # Progress report
 echo "Completed copying source data: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
@@ -81,14 +77,11 @@ echo ""
 
 # Progress report
 echo "Started combining gvcfs"
-echo ""
 
 # File names
 combined_gvcf="${set_id}.g.vcf"
 combining_gvcf_log="${set_id}_combine_gvcfs.log"
 combined_gvcf_md5="${combined_gvcf}.md5"
-
-#gvcfs_to_combine='-V P1_A01.g.vcf -V P1_A02.g.vcf'
 
 # Process files  
 "${java7}" -Xmx60g -jar "${gatk}" \
@@ -113,91 +106,77 @@ echo ""
 
 # Make md5 file
 echo "Started calculating md5 sum"
-echo ""
-
 md5sum "${combined_gvcf}" "${combined_gvcf}.idx" > "${combined_gvcf_md5}"
 
 # Progress report
-echo ""
 echo "Completed calculating md5 sum: $(date +%d%b%Y_%H:%M:%S)"
 echo ""
 
-# ----- Remove the source gvcf files from hpc ----- #
+# ----- Remove source gvcf files from hpc ----- #
 
-if [ "${remove_source_files_from_hpc}" == "yes" ] || [ "${remove_source_files_from_hpc}" == "Yes" ]
-then  
-  gvcfs_to_remove="$(<${source_gvcfs})"
-  for gvcf_file in ${gvcfs_to_remove}
-  do
-    rm -f "${gvcf_file}" "${gvcf_file}.idx"
-  done
+rm -fr "${combined_gvcfs_folder}/${set_id}_source_files/"
 
-  echo "Removed source gvcf files from cluster"
-  echo ""
-else
-  echo "Source gvcf files are not removed from hpc"
-  echo ""
-fi
+echo "Source files are removed from cluster"
+echo ""
 
 # ----- Copy results to NAS ----- #
 
-if [ "${copy_results_to_nas}" == "yes" ] || [ "${copy_results_to_nas}" == "Yes" ]
-then  
+echo "Started copying results to NAS: $(date +%d%b%Y_%H:%M:%S)"
+echo ""
 
-  # Progress report
-  echo "Started copying results to NAS: $(date +%d%b%Y_%H:%M:%S)"
-  echo ""
+# Copy results
+ssh "${data_server}" "mkdir -p ${project_location}/${project}/combined_gvcfs"
 
-  # Copy results
-  rsync -thrqe "ssh -x" "${combined_gvcfs_folder}" "${data_server}:${project_location}/${project}/" 
+rsync -thrqe "ssh -x" "${combined_gvcf}" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${combined_gvcf}.idx" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${combined_gvcf_md5}" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${combining_gvcf_log}" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${source_gvcfs}" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${set_id}_combine_gvcfs.res" "${data_server}:${project_location}/${project}/combined_gvcfs/"
+rsync -thrqe "ssh -x" "${set_id}.log" "${data_server}:${project_location}/${project}/combined_gvcfs/"
 
-  # Update owner/group
-  # to be done
+# Change ownership on nas (to allow user manipulating files later w/o administrative privileges)
+ssh "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}/${project}/combined_gvcfs"
+ssh "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}/${project}" # just in case...
+ssh "${data_server}" "chown -R ${mgqnap_user}:${mgqnap_group} ${project_location}" # just in case...
 
-  # Progress report
-  echo "Completed copying results to NAS: $(date +%d%b%Y_%H:%M:%S)"
-  echo ""
-
-else
-  echo "Results are not copied to NAS"
-  echo ""
-fi
+# Progress report to log on nas
+timestamp="$(date +%d%b%Y_%H:%M:%S)"
+ssh "${data_server}" "echo \"\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
+ssh "${data_server}" "echo \"Completed copying results to NAS: ${timestamp}\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
+ssh "${data_server}" "echo \"\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
 
 # ----- Remove results from cluster ----- #
 
-if [ "${remove_results_from_hpc}" == "yes" ] || [ "${remove_results_from_hpc}" == "Yes" ] 
-then 
+rm -f "${combined_gvcf}"
+rm -f "${combined_gvcf}.idx"
+rm -f "${combined_gvcf_md5}"
+rm -f "${combining_gvcf_log}"
+rm -f "${source_gvcfs}"
+rm -f "${set_id}_combine_gvcfs.res"
+rm -f "${set_id}.log"
 
-  rm -f "${combined_gvcf}"
-  rm -f "${combined_gvcf_md5}"
-  rm -f "${combining_gvcf_log}"
-  rm -f "${source_gvcfs}"
-  rm -f "${set_id}_combine_gvcfs.res"
-  rm -f "${set_id}.log"
+# Progress report to log on nas
+ssh "${data_server}" "echo \"Results are removed from cluster\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
 
-  # Update log on NAS, if needed
-  if [ "${copy_results_to_nas}" == "yes" ] || [ "${copy_results_to_nas}" == "Yes" ]
-  then  
-    rsync -thrqe "ssh -x" "${set_id}.log" "${data_server}:${project_location}/${project}/combined_gvcfs/"
-  fi
+# --- Return to the initial folder --- #
 
-else 
-  echo "Results are not removed from hpc"
-  echo ""
-fi 
-
-# Return to the initial folder
 cd "${init_dir}"
 
-# --- Remove working folder from hpc --- #
+# --- Remove working folder from hpc, if requested --- #
+
 if [ "${remove_project_folder_from_hpc}" == "yes" ] || [ "${remove_project_folder_from_hpc}" == "Yes" ]
 then
+
+  # Remove folder
   rm -fr "${project_folder}"
   
-  # Update log on NAS, if needed
-  if [ "${copy_results_to_nas}" == "yes" ] || [ "${copy_results_to_nas}" == "Yes" ]
-  then  
-    ssh "${data_server}" "echo \"Removed working folder from cluster\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
-  fi
+  # Update log on nas
+  ssh "${data_server}" "echo \"Working folder is removed from cluster\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
+
+else
+  
+  # Update log on nas
+  ssh "${data_server}" "echo \"Working folder is not removed from cluster\" >> ${project_location}/${project}/combined_gvcfs/${set_id}.log"
   
 fi

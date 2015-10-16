@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # a00_start_pipeline.sh
-# Start vqsr
-# Alexey Larionov, 16Oct2015
+# Start filtering raw vcf by qual
+# Alexey Larionov, 14Oct2015
 
 ## Read parameter
 job_file="${1}"
@@ -12,12 +12,12 @@ scripts_folder="${2}"
 source "${scripts_folder}/a02_read_config.sh"
 
 # Start lane pipeline log
-mkdir -p "${vqsr_vcf_folder}"
-mkdir -p "${vqsr_vcf_folder}/${source_vcf%.vcf}_source_files"
-log="${vqsr_vcf_folder}/${source_vcf%_raw.vcf}_vqsr.log"
+mkdir -p "${filtered_vcf_folder}"
+mkdir -p "${filtered_vcf_folder}/${raw_vcf%.vcf}_source_files"
+log="${filtered_vcf_folder}/${raw_vcf%_raw.vcf}_qual${qual_threshold}.log"
 
-echo "WES library: vqsr" > "${log}"
-echo "${source_vcf}" >> "${log}" 
+echo "WES library: filtering raw vcf by qual" > "${log}"
+echo "${raw_vcf}" >> "${log}" 
 echo "Started: $(date +%d%b%Y_%H:%M:%S)" >> "${log}"
 echo "" >> "${log}" 
 
@@ -34,14 +34,15 @@ slurm_time="--time=${time_to_request}"
 slurm_account="--account=${account_to_use}"
 
 sbatch "${slurm_time}" "${slurm_account}" \
-  "${scripts_folder}/s01_filter_with_vqsr.sb.sh" \
+  "${scripts_folder}/s01_filter_by_qual.sb.sh" \
   "${job_file}" \
-  "${source_vcf}" \
+  "${raw_vcf}" \
+  "${qual_threshold}" \
   "${scripts_folder}" \
-  "${vqsr_vcf_folder}" \
+  "${filtered_vcf_folder}" \
   "${log}"
 
 # Update pipeline log
 echo "" >> "${log}"
-echo "Submitted s01_filter_with_vqsr: $(date +%d%b%Y_%H:%M:%S)" >> "${log}"
+echo "Submitted s01_filter_by_qual: $(date +%d%b%Y_%H:%M:%S)" >> "${log}"
 echo "" >> "${log}"

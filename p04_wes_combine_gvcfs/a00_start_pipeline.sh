@@ -13,6 +13,7 @@ source "${scripts_folder}/a02_read_config.sh"
 
 # Start lane pipeline log
 mkdir -p "${combined_gvcfs_folder}"
+mkdir -p "${combined_gvcfs_folder}/${set_id}_source_files"
 log="${combined_gvcfs_folder}/${set_id}.log"
 
 echo "WES library: combine gvcfs" > "${log}"
