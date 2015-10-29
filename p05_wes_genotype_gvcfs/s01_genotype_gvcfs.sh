@@ -136,6 +136,7 @@ rm -f "${result_id}_raw_vcf.log"
 rm -f "${result_id}_raw_vcf.res"
 
 ssh -x "${data_server}" "echo \"Removed results from cluster\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"
+ssh -x "${data_server}" "echo \"\" >> ${project_location}/${project}/raw_vcf/${result_id}_raw_vcf.log"
 
 # Return to the initial folder
 cd "${init_dir}"

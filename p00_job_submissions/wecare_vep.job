@@ -1,0 +1,57 @@
+Job description file for annotating filtered vcfs with vep
+Alexey Larionov, 26Oct2015
+
+Annotating filtetred vcf with vep (TEMPLATE v2)
+
+===================== Analysis settings =====================
+
+project: wecare
+source vcf folder: qual_filtered_vcf
+source vcf: wecare_oct2015_vqsr_qual100.vcf
+
+Data server: admin@mgqnap.medschl.cam.ac.uk
+Project location: /share/alexey
+
+Remove project folder from HPC scratch after run: no
+
+======================= HPC settings ========================
+
+working_folder: /scratch/medgen/users/alexey
+
+Account to use on HPC: TISCHKOWITZ-SL2
+Max time to request (hrs.min.sec): 05.00.00
+
+====================== mgqnap settings ======================
+
+mgqnap_user: alexey
+mgqnap_group: mtgroup
+
+==================== Pipeline summary ======================
+
+#Annotating filtered vcfs with vep
+
+===================== Standard settings =====================
+
+scripts_folder: /scratch/medgen/scripts/p08_wes_annotate_with_vep
+start_script: a00_start_pipeline.sh
+
+Tools and resources
+-------------------
+
+tools_folder: /scratch/medgen/tools
+ensembl_api_folder: ensembl/v82
+
+vep_script: ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl
+vep_cache: grch37_vep_cache
+
+Working sub-folders
+-------------------
+
+annotated_vcf_folder: vep_annotated_vcf
+
+Additional settings
+-------------------
+
+txt_vep_fields: Uploaded_variation,Location,SYMBOL,Consequence,Existing_variation,GMAF,AFR_MAF,ASN_MAF,EUR_MAF,EAS_MAF,SAS_MAF,AA_MAF,EA_MAF,Allele,Codons,cDNA_position,CDS_position,Amino_acids,Protein_position,DISTANCE,STRAND,CLIN_SIG,SIFT,PolyPhen,SYMBOL_SOURCE
+
+vcf_vep_fields: SYMBOL,Consequence,Existing_variation,GMAF,AFR_MAF,ASN_MAF,EUR_MAF,EAS_MAF,SAS_MAF,AA_MAF,EA_MAF,Allele,Codons,cDNA_position,CDS_position,Amino_acids,Protein_position,DISTANCE,STRAND,CLIN_SIG,SIFT,PolyPhen,SYMBOL_SOURCE

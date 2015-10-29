@@ -1,0 +1,42 @@
+Job description file for tabulating vep vcf
+Alexey Larionov, 27Oct2015
+
+tabulating vep-annotated vcf (TEMPLATE v1)
+
+===================== Analysis settings =====================
+
+project: wecare
+dataset name: wecare_oct2015
+source vcf folder: vep_annotated_vcf
+source vcf: wecare_oct2015_vqsr_qual100_vep.vcf
+
+Data server: admin@mgqnap.medschl.cam.ac.uk
+Project location: /share/alexey
+
+Remove project folder from HPC scratch after run: no
+
+======================= HPC settings ========================
+
+working_folder: /scratch/medgen/users/alexey
+
+Account to use on HPC: TISCHKOWITZ-SL2
+Max time to request (hrs.min.sec): 02.00.00
+
+====================== mgqnap settings ======================
+
+mgqnap_user: alexey
+mgqnap_group: mtgroup
+
+==================== Pipeline summary ======================
+
+#Tabulating vep vcf
+
+===================== Standard settings =====================
+
+scripts_folder: /scratch/medgen/scripts/p09_wes_tabulate_vep_vcf
+start_script: a00_start_pipeline.sh
+
+Working sub-folders
+-------------------
+
+tabulated_vep_vcf_folder: tabulated_vep_vcf

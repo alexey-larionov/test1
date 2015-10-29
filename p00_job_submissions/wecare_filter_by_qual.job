@@ -1,0 +1,71 @@
+Job description file for filtering raw vcfs by QUAL
+Alexey Larionov, 19Oct2015
+
+wecare - filter by qual > 100 (TEMPLATE v1)
+
+===================== Analysis settings =====================
+
+project: wecare
+source vcf folder: vqsr_vcf
+source vcf: wecare_oct2015_vqsr.vcf
+qual threshold: 100.0
+
+Notes: 
+- If source vcf ends by "_raw.vcf", then "_raw" is removed
+- keep one digit after decimal point in the threshold
+
+Data server: admin@mgqnap.medschl.cam.ac.uk
+Project location: /share/alexey
+
+Remove project folder from HPC scratch after run: no
+
+======================= HPC settings ========================
+
+working_folder: /scratch/medgen/users/alexey
+
+Account to use on HPC: TISCHKOWITZ-SL2
+Max time to request (hrs.min.sec): 02.00.00
+
+====================== mgqnap settings ======================
+
+mgqnap_user: alexey
+mgqnap_group: mtgroup
+
+==================== Pipeline summary ======================
+
+#Filtering raw vcfs by QUAL
+
+===================== Standard settings =====================
+
+scripts_folder: /scratch/medgen/scripts/p07_wes_filter_by_qual
+start_script: a00_start_pipeline.sh
+
+Tools
+-----
+
+tools_folder: /scratch/medgen/tools
+java7: java/jre1.7.0_76/bin/java
+gatk: gatk/gatk-3.4-46/GenomeAnalysisTK.jar
+
+bcftools: bcftools/bcftools-1.2/bin/bcftools
+plot_vcfstats: bcftools/bcftools-1.2/bin/plot-vcfstats
+
+Updated version of Python matplotlib library for plot-vcfstats script
+python_bin: python/python_2.7.10/bin/
+
+Resources
+---------
+
+resources_folder: /scratch/medgen/resources
+
+decompressed_bundle_folder: gatk_bundle/b37/decompressed
+ref_genome: human_g1k_v37.fasta
+
+nextera_folder: illumina_nextera
+nextera_targets_intervals: nexterarapidcapture_exome_targetedregions_v1.2.b37.intervals
+
+Working sub-folders
+-------------------
+
+filtered_vcf_folder: qual_filtered_vcf
+vcf_plots_folder: plots

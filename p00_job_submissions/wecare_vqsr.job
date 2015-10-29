@@ -1,0 +1,83 @@
+Job description file for vqsr
+Alexey Larionov, 16Oct2015
+
+Filtering raw vcf usinf vqsr (TEMPLATE v1)
+
+===================== Analysis settings =====================
+
+project: wecare
+source_vcf: wecare_oct2015_raw.vcf
+
+Note:
+The source file MUST end by "_raw.vcf" !
+
+Data server: admin@mgqnap.medschl.cam.ac.uk
+Project location: /share/alexey
+
+Remove project folder from HPC scratch after run: no
+
+======================= HPC settings ========================
+
+working_folder: /scratch/medgen/users/alexey
+
+Account to use on HPC: TISCHKOWITZ-SL2
+Max time to request (hrs.min.sec): 05.00.00
+
+====================== mgqnap settings ======================
+
+mgqnap_user: alexey
+mgqnap_group: mtgroup
+
+==================== Pipeline summary ======================
+
+#vqsr 
+#99% truth sensitivity for snps
+#97% truth sensitivity for indels
+#The above thresholds were choosen empirically for wecare_oct2015 dataset
+#being slightly above VQSR log 0
+
+===================== Standard settings =====================
+
+scripts_folder: /scratch/medgen/scripts/p06_wes_filter_with_vqsr
+start_script: a00_start_pipeline.sh
+
+Tools
+-----
+
+tools_folder: /scratch/medgen/tools
+
+java7: java/jre1.7.0_76/bin/java
+gatk: gatk/gatk-3.4-46/GenomeAnalysisTK.jar
+
+r_folder: r/R-3.2.0/bin
+
+bcftools: bcftools/bcftools-1.2/bin/bcftools
+plot_vcfstats: bcftools/bcftools-1.2/bin/plot-vcfstats
+
+python_bin: python/python_2.7.10/bin/
+Contains updated version of matplotlib library for plot-vcfstats script
+
+Resources
+---------
+
+resources_folder: /scratch/medgen/resources
+
+decompressed_bundle_folder: gatk_bundle/b37/decompressed
+
+ref_genome: human_g1k_v37.fasta
+hapmap: hapmap_3.3.b37.vcf
+omni: 1000G_omni2.5.b37.vcf
+phase1_1k_hc: 1000G_phase1.snps.high_confidence.b37.vcf
+dbsnp_138: dbsnp_138.b37.vcf
+dbsnp_138_sites129: dbsnp_138.b37.excluding_sites_after_129.vcf
+mills: Mills_and_1000G_gold_standard.indels.b37.vcf
+
+nextera_folder: illumina_nextera
+nextera_targets_intervals: nexterarapidcapture_exome_targetedregions_v1.2.b37.intervals
+
+Working sub-folders
+-------------------
+
+vqsr_vcf_folder: vqsr_vcf
+vcf_plots_folder: plots
+

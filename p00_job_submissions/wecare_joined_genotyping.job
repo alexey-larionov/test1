@@ -1,0 +1,66 @@
+Job description file for genotyping combined gvcfs
+Alexey Larionov, 15Oct2015
+
+Joined genotyping of all 6 plates (TEMPLATE v1)
+
+===================== Analysis settings =====================
+
+project: wecare
+sets: plate1 plate2 plate3 plate4 plate5 plate6
+result_id: wecare_oct2015
+
+Data server: admin@mgqnap.medschl.cam.ac.uk
+Project location: /share/alexey
+
+Remove project folder from HPC scratch after run: no
+
+======================= HPC settings ========================
+
+working_folder: /scratch/medgen/users/alexey
+
+Account to use on HPC: TISCHKOWITZ-SL2
+Max time to request (hrs.min.sec): 24.00.00
+
+====================== mgqnap settings ======================
+
+mgqnap_user: alexey
+mgqnap_group: mtgroup
+
+==================== Pipeline summary ======================
+
+#Joined variant calling 
+
+===================== Standard settings =====================
+
+scripts_folder: /scratch/medgen/scripts/p05_wes_genotype_gvcfs
+start_script: a00_start_pipeline.sh
+
+Tools
+-----
+
+tools_folder: /scratch/medgen/tools
+java7: java/jre1.7.0_76/bin/java
+gatk: gatk/gatk-3.4-46/GenomeAnalysisTK.jar
+
+bcftools: bcftools/bcftools-1.2/bin/bcftools
+plot_vcfstats: bcftools/bcftools-1.2/bin/plot-vcfstats
+
+Updated version of Python matplotlib library for plot-vcfstats script
+python_bin: python/python_2.7.10/bin/
+
+Resources
+---------
+
+resources_folder: /scratch/medgen/resources
+
+decompressed_bundle_folder: gatk_bundle/b37/decompressed
+ref_genome: human_g1k_v37.fasta
+
+nextera_folder: illumina_nextera
+nextera_targets_intervals: nexterarapidcapture_exome_targetedregions_v1.2.b37.intervals
+
+Working sub-folders
+-------------------
+
+raw_vcf_folder: raw_vcf
+vcf_plots_folder: plots

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # s02_read_config.sh
-# vqsr
-# Alexey Larionov, 16Oct2015
+# Parse config file for filtering raw vcf by qual
+# Alexey Larionov, 19Oct2015
 
 # Function for reading parameters
 function get_parameter()
@@ -16,29 +16,31 @@ function get_parameter()
 # ======= Analysis settings ======= #
 
 project=$(get_parameter "project") # e.g. wecare
-source_vcf=$(get_parameter "source_vcf") # e.g. wecare_oct2015_raw.vcf
+source_vcf_folder=$(get_parameter "source vcf folder") # e.g. vqsr_vcf
+source_vcf=$(get_parameter "source vcf") # e.g. wecare_oct2015_vqsr.vcf
+qual_threshold=$(get_parameter "qual threshold") # e.g. 150
 
 data_server=$(get_parameter "Data server") # e.g. admin@mgqnap.medschl.cam.ac.uk
 project_location=$(get_parameter "Project location") # e.g. /share/alexey
 
-remove_project_folder=$(get_parameter "Remove project folder from HPC scratch after run") # e.g. no
+remove_project_folder=$(get_parameter "Remove project folder from HPC scratch after run") # e.g. yes
 
 # ========== HPC settings ========== #
 
 working_folder=$(get_parameter "working_folder") # e.g. /scratch/medgen/users/alexey
 
 account_to_use=$(get_parameter "Account to use on HPC") # e.g. TISCHKOWITZ-SL2
-time_to_request=$(get_parameter "Max time to request (hrs.min.sec)") # e.g. 00.50.00
+time_to_request=$(get_parameter "Max time to request (hrs.min.sec)") # e.g. 02.00.00
 time_to_request=${time_to_request//./:} # substitute dots to colons 
 
 # ======== mgqnap settings ======== #
 
-mgqnap_user=$(get_parameter "mgqnap_user") # e.g. mae
+mgqnap_user=$(get_parameter "mgqnap_user") # e.g. alexey
 mgqnap_group=$(get_parameter "mgqnap_group") # e.g. mtgroup
 
 # ======= Standard settings ======= #
 
-scripts_folder=$(get_parameter "scripts_folder") # e.g. /scratch/medgen/scripts/p06_wes_filter_with_vqsr
+scripts_folder=$(get_parameter "scripts_folder") # e.g. /scratch/medgen/scripts/p06_wes_filter_by_qual
 
 # ----------- Tools ---------- #
 
@@ -49,10 +51,6 @@ java7="${tools_folder}/${java7}"
 
 gatk=$(get_parameter "gatk") # e.g. gatk/gatk-3.4-46/GenomeAnalysisTK.jar
 gatk="${tools_folder}/${gatk}"
-
-r_folder=$(get_parameter "r_folder") # e.g. r/R-3.2.0/bin
-r_folder="${tools_folder}/${r_folder}"
-PATH="${r_folder}:${PATH}"
 
 bcftools=$(get_parameter "bcftools") # e.g. bcftools/bcftools-1.2/bin/bcftools
 bcftools="${tools_folder}/${bcftools}"
@@ -76,24 +74,6 @@ decompressed_bundle_folder="${resources_folder}/${decompressed_bundle_folder}"
 ref_genome=$(get_parameter "ref_genome") # e.g. human_g1k_v37.fasta
 ref_genome="${decompressed_bundle_folder}/${ref_genome}"
 
-hapmap=$(get_parameter "hapmap") # e.g. hapmap_3.3.b37.vcf
-hapmap="${decompressed_bundle_folder}/${hapmap}"
-
-omni=$(get_parameter "omni") # e.g. 1000G_omni2.5.b37.vcf
-omni="${decompressed_bundle_folder}/${omni}"
-
-phase1_1k_hc=$(get_parameter "phase1_1k_hc") # e.g. 1000G_phase1.snps.high_confidence.b37.vcf
-phase1_1k_hc="${decompressed_bundle_folder}/${phase1_1k_hc}"
-
-dbsnp_138=$(get_parameter "dbsnp_138") # e.g. dbsnp_138.b37.vcf
-dbsnp_138="${decompressed_bundle_folder}/${dbsnp_138}"
-
-dbsnp_138_sites129=$(get_parameter "dbsnp_138_sites129") # e.g. dbsnp_138.b37.excluding_sites_after_129.vcf
-dbsnp_138_sites129="${decompressed_bundle_folder}/${dbsnp_138_sites129}"
-
-mills=$(get_parameter "mills") # e.g. Mills_and_1000G_gold_standard.indels.b37.vcf
-mills="${decompressed_bundle_folder}/${mills}"
-
 nextera_folder=$(get_parameter "nextera_folder") # e.g. illumina_nextera
 nextera_folder="${resources_folder}/${nextera_folder}"
 
@@ -104,8 +84,8 @@ nextera_targets_intervals="${nextera_folder}/${nextera_targets_intervals}"
 
 project_folder="${working_folder}/${project}" # e.g. CCLG
 
-vqsr_vcf_folder=$(get_parameter "vqsr_vcf_folder") # e.g. vqsr_vcf
-vqsr_vcf_folder="${project_folder}/${vqsr_vcf_folder}"
+filtered_vcf_folder=$(get_parameter "filtered_vcf_folder") # e.g. qual_filtered_vcf
+filtered_vcf_folder="${project_folder}/${filtered_vcf_folder}"
 
 vcf_plots_folder=$(get_parameter "vcf_plots_folder") # e.g. plots
-vcf_plots_folder="${vqsr_vcf_folder}/${vcf_plots_folder}"
+vcf_plots_folder="${filtered_vcf_folder}/${vcf_plots_folder}"
